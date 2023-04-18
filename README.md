@@ -1,1 +1,3 @@
 # Mini-Project_Concert-Ticket-Booking-System
+
+> Concert Ticket Booking System merupakan sistem informasi yang dapat digunakan untuk melakukan pembelian tiket konser secara online. Tujuan dibuatnya sistem informasi ini adalah untuk mempermudah pengguna dalam memperoleh informasi terbaru mengenai konser-konser yang akan diselenggarakan di Indonesia serta pengguna dapat memesan tiket secara mudah dan cepat, hal ini sangat membantu para penggemar musik di seluruh tanah air apabila ingin menonton konser musik kesukaan mereka secara langsung. Dan juga dengan sistem informasi ini dapat mengetahui informasi mengenai konser-konser musik yang ada dan tanggal berapa serta wilayah mana akan diselenggarakan, sekaligus juga dapat mengetahui harga tiket yang sudah disediakan.
