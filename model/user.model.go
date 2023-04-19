@@ -6,11 +6,10 @@ import (
 
 type User struct {
 	gorm.Model
-	id_user int `json:"id_user" form:"id_user"`
-	name string `json:"name" form:"name"`
-	phone_number string `json:"phone_number" form:"phone_number"`
-	email string `json:"email" form:"email"`
-	password string `json:"password" form:"password"`
+	Name string `json:"name"`
+	Phone_number string `json:"phone_number"`
+	Email string `json:"email"`
+	Password string `json:"password"`
 }
 
 var users []User
