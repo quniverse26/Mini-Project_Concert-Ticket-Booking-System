@@ -60,14 +60,14 @@ func GetUsersController(c echo.Context) error {
 
   //delete user
   func DeleteUserController(c echo.Context) error {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, _ := strconv.Atoi(c.Param("ID"))
 
 	// binding data
 	user := model.User{}
 	c.Bind(&user)
 	
 	//var users model.User
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("ID"))
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func UpdateUserController(c echo.Context) error {
 	}
 
 	var user model.User
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("ID"))
 	if err != nil {
 		data["message"] = err.Error()
 		return c.JSON(http.StatusBadRequest, data)
@@ -96,7 +96,7 @@ func UpdateUserController(c echo.Context) error {
 
 	name := c.Request().PostFormValue("name")
 
-	result := config.DB.Model(&user).Where("id = ?", id).Update("name", name)
+	result := config.DB.Model(&user).Where("ID = ?", id).Update("name", name)
 	if result.Error != nil {
 		data["message"] = result.Error
 		return c.JSON(http.StatusBadRequest, data)

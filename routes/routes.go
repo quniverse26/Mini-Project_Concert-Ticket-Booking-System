@@ -17,5 +17,9 @@ func New() *echo.Echo {
 	e.DELETE("/user/:id", controller.DeleteUserController)
 	e.PUT("/user/:id", controller.UpdateUserController)
 
+	//admin
+	e.GET("/admin", controller.GetAdminsController)
+	e.POST("/admin", controller.CreateAdminController)
+
 	return e
 }
