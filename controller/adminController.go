@@ -15,8 +15,6 @@ func GetAdminsController(c echo.Context) error {
 	var admins []model.Admin
 
 	config.DB.Find(&admins)
-
-	//return c.JSON(http.StatusOK, users)
   
 	if err := config.DB.Find(&admins).Error; err != nil {
 	  return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -37,7 +35,7 @@ func GetAdminsController(c echo.Context) error {
 	  return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
-	  "message": "success create new user",
+	  "message": "success create new admin",
 	  "admin":    admins,
 	})
   }
