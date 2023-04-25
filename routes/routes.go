@@ -21,5 +21,13 @@ func New() *echo.Echo {
 	e.GET("/admin", controller.GetAdminsController)
 	e.POST("/admin", controller.CreateAdminController)
 
+	//ticket
+	e.GET("/ticket", controller.GetTicketsController)
+	e.POST("/ticket", controller.CreateTicketController)
+
+	//booking
+	e.GET("/booking", controller.GetBookingsController)
+	e.POST("/booking", controller.CreateBookingController)
+
 	return e
 }
