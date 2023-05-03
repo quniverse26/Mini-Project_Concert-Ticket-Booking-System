@@ -1,3 +1,3 @@
 package constants
 
-const SECRET_JWT = "123abc"
+const SECRET_JWT = "sayaadmin"

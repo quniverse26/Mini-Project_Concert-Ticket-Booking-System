@@ -1,7 +1,11 @@
 package routes
 
 import (
+	//"net/http"
+	
 	"github.com/quniverse26/miniproject/controller"
+	//"github.com/quniverse26/miniproject/middleware"
+
 	"github.com/labstack/echo"
 )
 
@@ -10,6 +14,12 @@ func New() *echo.Echo {
 	e := echo.New()
 
 	// Route / to handler function
+
+	// protected route
+	//e.GET("/protected", func(c echo.Context) error {
+		//return c.String(http.StatusOK, "This is a protected route")
+	//}, middleware.jwtMiddleware)
+
 	//user
 	e.GET("/user", controller.GetUsersController)
 	//e.GET("/user/:id", controller.GetUserController)
@@ -24,6 +34,8 @@ func New() *echo.Echo {
 	//ticket
 	e.GET("/ticket", controller.GetTicketsController)
 	e.POST("/ticket", controller.CreateTicketController)
+	e.DELETE("/ticket/:id", controller.DeleteTicketController)
+	e.PUT("/ticket/:id", controller.UpdateTicketController)
 
 	//booking
 	e.GET("/booking", controller.GetBookingsController)

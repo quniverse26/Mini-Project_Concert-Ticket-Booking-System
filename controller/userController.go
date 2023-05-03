@@ -10,38 +10,20 @@ import (
 	"github.com/labstack/echo"
 )
 
-type Controller struct {
-}
-
 // get all users
 func GetUsersController(c echo.Context) error {
 	var users []model.User
 
 	config.DB.Find(&users)
-
-	//return c.JSON(http.StatusOK, users)
   
 	if err := config.DB.Find(&users).Error; err != nil {
 	  return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 	  "message": "success get all users",
-	  "user":   users,
+	  "users":   users,
 	})
   }
-
-  // get user by id
-//func GetUserController(c echo.Context) error {
-	//user := model.User{}
-	//c.Bind(&user)
-  
-	//if err := config.DB.Find(&user).Error; err != nil {
-	  //return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	//}
-	//id, _ := strconv.Atoi(c.Param("id"))
-	//users := model.User{Id: id, Name: "name", Email: "email", Password: "password"}
-	//return c.JSON(http.StatusOK, users)
-  //}
 
   // create new user
   func CreateUserController(c echo.Context) error {
@@ -60,19 +42,21 @@ func GetUsersController(c echo.Context) error {
 
   //delete user
   func DeleteUserController(c echo.Context) error {
-	id, _ := strconv.Atoi(c.Param("id"))
-
-	// binding data
-	user := model.User{}
-	c.Bind(&user)
-	
-	//var users model.User
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return err
 	}
 
-	config.DB.Unscoped().Delete(&user, id)
+	// load user from database
+	user := model.User{}
+	if err := config.DB.First(&user, id).Error; err != nil {
+		return err
+	}
+
+	// delete user
+	if err := config.DB.Unscoped().Delete(&user).Error; err != nil {
+		return err
+	}
 
 	data := &echo.Map{
 		"message": "success",
@@ -82,7 +66,6 @@ func GetUsersController(c echo.Context) error {
 
 //update user
 func UpdateUserController(c echo.Context) error {
-
 	data := echo.Map{
 		"message": "success",
 	}
@@ -94,11 +77,21 @@ func UpdateUserController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, data)
 	}
 
-	name := c.Request().PostFormValue("name")
+	// load user from database
+	if err := config.DB.First(&user, id).Error; err != nil {
+		data["message"] = err.Error()
+		return c.JSON(http.StatusBadRequest, data)
+	}
 
-	result := config.DB.Model(&user).Where("id = ?", id).Update("name", name)
-	if result.Error != nil {
-		data["message"] = result.Error
+	// bind updated data to user
+	if err := c.Bind(&user); err != nil {
+		data["message"] = err.Error()
+		return c.JSON(http.StatusBadRequest, data)
+	}
+
+	// update user
+	if err := config.DB.Save(&user).Error; err != nil {
+		data["message"] = err.Error()
 		return c.JSON(http.StatusBadRequest, data)
 	}
 

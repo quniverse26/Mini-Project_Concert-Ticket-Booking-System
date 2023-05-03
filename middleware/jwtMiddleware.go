@@ -1,30 +1,38 @@
 package middleware
 
 import (
-	"github.com/quniverse26/miniproject/constants"
-	"time"
+    "net/http"
 
-	"github.com/dgrijalva/jwt-go"
-	"github.com/labstack/echo"
+    "github.com/dgrijalva/jwt-go"
+    "github.com/labstack/echo/v4"
+    //"github.com/labstack/echo/v4/middleware"
 )
 
-func CreateToken(userId int, name string) (string, error) {
+func jwtMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+    return func(c echo.Context) error {
+        // get token from Authorization header
+        token := c.Request().Header.Get("Authorization")
 
-	claims := jwt.MapClaims{}
-	claims["userId"] = userId
-	claims["name"] = name
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
+        // parse token
+        parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+            // validate signing method
+            if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+                return nil, echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+            }
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(constants.SECRET_JWT))
-}
+            // validate secret
+            secret := "sayaadmin" // replace with your secret key
+            return []byte(secret), nil
+        })
 
-func ExtractTokenUserId(e echo.Context) int {
-	user := e.Get("user").(*jwt.Token)
-	if user.Valid {
-		claims := user.Claims.(jwt.MapClaims)
-		userId := claims["userId"].(float64)
-		return int(userId)
-	}
-	return 0
+        if err != nil {
+            return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+        }
+
+        if parsedToken == nil || !parsedToken.Valid {
+            return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+        }
+
+        return next(c)
+    }
 }

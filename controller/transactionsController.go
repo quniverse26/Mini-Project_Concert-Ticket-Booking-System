@@ -15,6 +15,9 @@ func GetTransactionsController(c echo.Context) error {
 	var transactions []model.Transactions
 
 	config.DB.Find(&transactions)
+	config.DB.Preload("Users").Find(&transactions)
+	config.DB.Preload("Tickets").Find(&transactions)
+	config.DB.Preload("Bookings").Find(&transactions)
   
 	if err := config.DB.Find(&transactions).Error; err != nil {
 	  return echo.NewHTTPError(http.StatusBadRequest, err.Error())
