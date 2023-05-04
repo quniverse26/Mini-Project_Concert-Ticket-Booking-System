@@ -60,5 +60,5 @@ func InitDB() {
 	DB.AutoMigrate(&model.Admin{})
 	DB.AutoMigrate(&model.Ticket{})
 	DB.AutoMigrate(&model.Booking{})
-	DB.AutoMigrate(&model.Transactions{})
+	DB.AutoMigrate(&model.Purchasings{})
   }

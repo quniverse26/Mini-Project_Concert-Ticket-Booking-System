@@ -40,9 +40,8 @@ func New() *echo.Echo {
 	e.GET("/booking", controller.GetBookingsController)
 	e.POST("/booking", controller.CreateBookingController)
 
-	//transactions
-	e.GET("/transactions", controller.GetTransactionsController)
-	e.POST("/transactions", controller.CreateTransactionController)
+	//purchasing
+	e.GET("/purchasings", controller.GetPurchasingsController)
 
 	return e
 }
