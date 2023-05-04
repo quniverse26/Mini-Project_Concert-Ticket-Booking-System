@@ -20,12 +20,11 @@ func New() *echo.Echo {
 		//return c.String(http.StatusOK, "This is a protected route")
 	//}, middleware.jwtMiddleware)
 
-	//user
-	e.GET("/user", controller.GetUsersController)
-	//e.GET("/user/:id", controller.GetUserController)
-	e.POST("/user", controller.CreateUserController)
-	e.DELETE("/user/:id", controller.DeleteUserController)
-	e.PUT("/user/:id", controller.UpdateUserController)
+	//buyer
+	e.GET("/buyers", controller.GetBuyersController)
+	e.POST("/buyer", controller.CreateBuyerController)
+	e.DELETE("/buyer/:id", controller.DeleteBuyerController)
+	e.PUT("/buyer/:id", controller.UpdateBuyerController)
 
 	//admin
 	e.GET("/admin", controller.GetAdminsController)

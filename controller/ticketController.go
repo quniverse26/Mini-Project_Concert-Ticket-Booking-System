@@ -69,7 +69,7 @@ func DeleteTicketController(c echo.Context) error {
 //update ticket
 func UpdateTicketController(c echo.Context) error {
 	data := echo.Map{
-		"message": "success",
+		"message": "success update ticket",
 	}
 
 	var ticket model.Ticket
