@@ -24,8 +24,8 @@ func New() *echo.Echo {
 	e.GET("/buyers", controller.GetBuyersController)
 	e.GET("/buyer/:id", controller.GetBuyerController)
 	e.POST("/buyer", controller.CreateBuyerController)
-	e.DELETE("/buyer/:id", controller.DeleteBuyerController)
-	e.PUT("/buyer/:id", controller.UpdateBuyerController)
+	e.DELETE("auth/buyer/:id", controller.DeleteBuyerController)
+	e.PUT("auth/buyer/:id", controller.UpdateBuyerController)
 
 	//admin
 	e.GET("/admins", controller.GetAdminsController)

@@ -1,38 +1,27 @@
 package middleware
 
 import (
-    "net/http"
-
-    "github.com/dgrijalva/jwt-go"
-    "github.com/labstack/echo/v4"
-    //"github.com/labstack/echo/v4/middleware"
+	"context"
+	"github.com/quniverse26/miniproject/utils"
+	"net/http"
 )
 
-func jwtMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-    return func(c echo.Context) error {
-        // get token from Authorization header
-        token := c.Request().Header.Get("Authorization")
+func Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		accessToken := r.Header.Get("Authorization")
 
-        // parse token
-        parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-            // validate signing method
-            if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-                return nil, echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
-            }
+		if accessToken == "" {
+			utils.Response(w, 401, "unauthorized", nil)
+			return
+		}
 
-            // validate secret
-            secret := "sayaadmin" // replace with your secret key
-            return []byte(secret), nil
-        })
+		user, err := utils.ValidateToken(accessToken)
+		if err != nil {
+			utils.Response(w, 401, err.Error(), nil)
+			return
+		}
 
-        if err != nil {
-            return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
-        }
-
-        if parsedToken == nil || !parsedToken.Valid {
-            return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
-        }
-
-        return next(c)
-    }
+		ctx := context.WithValue(r.Context(), "userinfo", user)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
