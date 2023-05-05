@@ -2,7 +2,7 @@ package controller
 
 import (
 	"net/http"
-	//"strconv"
+	"strconv"
 
 	"github.com/quniverse26/miniproject/model"
 	"github.com/quniverse26/miniproject/config"
@@ -25,8 +25,8 @@ func GetBookingsController(c echo.Context) error {
 	})
   }
 
-  // create new admin
-  func CreateBookingController(c echo.Context) error {
+// create new booking
+func CreateBookingController(c echo.Context) error {
 	bookings := model.Booking{}
 	c.Bind(&bookings)
   
@@ -38,4 +38,21 @@ func GetBookingsController(c echo.Context) error {
 	  "message": "success create new booking",
 	  "booking":    bookings,
 	})
-  }
+}
+
+//get booking by id
+func GetBookingController(c echo.Context) error {
+	// Bind request data to buyer struct
+	booking := model.Booking{}
+	if err := c.Bind(&booking); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	// Find booking by ID
+	id, _ := strconv.Atoi(c.Param("id"))
+	if err := config.DB.Find(&booking, id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, booking)
+}

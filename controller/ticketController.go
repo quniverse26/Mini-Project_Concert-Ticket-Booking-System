@@ -42,6 +42,23 @@ func GetTicketsController(c echo.Context) error {
 	})
   }
 
+//get ticket by id
+func GetTicketController(c echo.Context) error {
+	// Bind request data to buyer struct
+	ticket := model.Ticket{}
+	if err := c.Bind(&ticket); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	// Find ticket by ID
+	id, _ := strconv.Atoi(c.Param("id"))
+	if err := config.DB.Find(&ticket, id).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, ticket)
+}
+
 //delete ticket
 func DeleteTicketController(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))

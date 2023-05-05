@@ -22,22 +22,25 @@ func New() *echo.Echo {
 
 	//buyer
 	e.GET("/buyers", controller.GetBuyersController)
+	e.GET("/buyer/:id", controller.GetBuyerController)
 	e.POST("/buyer", controller.CreateBuyerController)
 	e.DELETE("/buyer/:id", controller.DeleteBuyerController)
 	e.PUT("/buyer/:id", controller.UpdateBuyerController)
 
 	//admin
-	e.GET("/admin", controller.GetAdminsController)
+	e.GET("/admins", controller.GetAdminsController)
 	e.POST("/admin", controller.CreateAdminController)
 
 	//ticket
-	e.GET("/ticket", controller.GetTicketsController)
+	e.GET("/tickets", controller.GetTicketsController)
+	e.GET("/ticket/:id", controller.GetTicketController)
 	e.POST("/ticket", controller.CreateTicketController)
 	e.DELETE("/ticket/:id", controller.DeleteTicketController)
 	e.PUT("/ticket/:id", controller.UpdateTicketController)
 
 	//booking
-	e.GET("/booking", controller.GetBookingsController)
+	e.GET("/bookings", controller.GetBookingsController)
+	e.GET("/booking/:id", controller.GetBookingController)
 	e.POST("/booking", controller.CreateBookingController)
 
 	//purchasing
