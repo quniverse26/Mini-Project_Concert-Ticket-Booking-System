@@ -1,12 +1,13 @@
 package controller
 
 import (
+	//"fmt"
 	"net/http"
 	//"strconv"
 	//"errors"
 
-	"github.com/quniverse26/miniproject/model"
 	"github.com/quniverse26/miniproject/config"
+	"github.com/quniverse26/miniproject/model"
 
 	"github.com/labstack/echo"
 	//"github.com/jinzhu/gorm"
@@ -31,8 +32,10 @@ import (
 
 func GetPurchasingsController(c echo.Context) error {
 	var purchasings []model.Purchasings
+	//var buyers []model.Buyer
 
 	config.DB.Find(&purchasings)
+	//fmt.Println(purchasings.buyers)
 	config.DB.Preload("Buyers").Find(&purchasings)
 	config.DB.Preload("Tickets").Find(&purchasings)
 	config.DB.Preload("Bookings").Find(&purchasings)
