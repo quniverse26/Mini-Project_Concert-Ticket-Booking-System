@@ -1,73 +1,77 @@
 package controller
 
 import (
-	"encoding/json"
 	"net/http"
 
-	"github.com/quniverse26/miniproject/config"
 	"github.com/quniverse26/miniproject/model"
-	"github.com/quniverse26/miniproject/utils"
+	"github.com/quniverse26/miniproject/config"
+
+	"github.com/labstack/echo"
 )
 
-func Register(w http.ResponseWriter, r *http.Request) {
-	var register model.Register
+func Register(c echo.Context) error {
+	
+	reqAuth := model.BuyerRegister{}
 
-	if err := json.NewDecoder(r.Body).Decode(&register); err != nil {
-		utils.Response(w, 500, err.Error(), nil)
-		return
+	c.Bind(&reqAuth)
+
+	err := config.DB.First(&model.Buyer{},"email = ?", reqAuth.Email).Error
+	
+	if err == nil {
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{
+			"message": "email already registered",
+		})
 	}
 
-	defer r.Body.Close()
-
-	if register.Password != register.PasswordConfirm {
-		utils.Response(w, 400, "Password not match", nil)
-		return
+	newBuyer := model.Buyer{
+		Name: reqAuth.Name,
+		Email: reqAuth.Email,
+		Password: reqAuth.Password,
 	}
 
-	passwordHash, err := utils.HashPassword(register.Password)
-	if err != nil {
-		utils.Response(w, 500, err.Error(), nil)
-		return
+	if err := config.DB.Create(&newBuyer).Error; err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{
+			"message": "failed to create buyer",
+		})
 	}
-
-	buyer := model.Buyer{
-		Name:     register.Name,
-		Email:    register.Email,
-		Password: passwordHash,
-	}
-
-	if err := config.DB.Create(&buyer).Error; err != nil {
-		utils.Response(w, 500, err.Error(), nil)
-		return
-	}
-
-	utils.Response(w, 201, "Register Successfully", nil)
+	
+	return c.JSON(http.StatusCreated, echo.Map{
+		"message": "success created buyer",
+	})
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
-	var login model.Login
+func Login(c echo.Context) error {
+	
+	reqAuth := model.BuyerLogin{}
 
-	if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
-		utils.Response(w, 500, err.Error(), nil)
-		return
-	}
+	c.Bind(&reqAuth)
 
-	var buyer model.Buyer
-	if err := config.DB.First(&buyer, "email = ?", login.Email).Error; err != nil {
-		utils.Response(w, 404, "Wrong email or password", nil)
-		return
-	}
+	buyer := model.Buyer{}
 
-	if err := utils.VerifyPassword(buyer.Password, login.Password); err != nil {
-		utils.Response(w, 404, "Wrong email or password", nil)
-		return
-	}
-
-	token, err := utils.CreateToken(&buyer)
+	err := config.DB.First(&buyer,"email = ?", reqAuth.Email).Error
+	
 	if err != nil {
-		utils.Response(w, 500, err.Error(), nil)
-		return
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{
+			"message": "email not registered",
+		})
 	}
 
-	utils.Response(w, 200, "Successfully Login", token)
+	if !buyer.CheckPassword(reqAuth.Password) {
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{
+			"message": "invalid email or password",
+		})
+	}
+
+	token, err := buyer.GenerateToken()
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, echo.Map{
+			"message": "failed to generate token",
+		})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"message": "success login",
+		"token": token,
+	})
 }
