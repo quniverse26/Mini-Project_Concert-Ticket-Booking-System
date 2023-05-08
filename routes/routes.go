@@ -7,25 +7,30 @@ import (
 	//"github.com/quniverse26/miniproject/middleware"
 
 	"github.com/labstack/echo"
+	//"github.com/labstack/echo/v4/middleware"
 )
 
 func New() *echo.Echo {
 	// create a new echo instance
 	e := echo.New()
 
+	//e.Pre(middleware.RemoveTrailingSlash())
+
 	// Route / to handler function
 
-	// protected route
-	//e.GET("/protected", func(c echo.Context) error {
-		//return c.String(http.StatusOK, "This is a protected route")
-	//}, middleware.jwtMiddleware)
+	// auth
+	authGroup := e.Group("/auth")
+	{
+		authGroup.POST("/register", controller.Register)
+		authGroup.POST("/login", controller.Login)
+	}
 
 	//buyer
 	e.GET("/buyers", controller.GetBuyersController)
 	e.GET("/buyer/:id", controller.GetBuyerController)
 	e.POST("/buyer", controller.CreateBuyerController)
-	e.DELETE("/buyer/:id", controller.DeleteBuyerController)
-	e.PUT("/buyer/:id", controller.UpdateBuyerController)
+	e.DELETE("buyer/:id", controller.DeleteBuyerController)
+	e.PUT("buyer/:id", controller.UpdateBuyerController)
 
 	//admin
 	e.GET("/admins", controller.GetAdminsController)
