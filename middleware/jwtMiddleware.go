@@ -29,7 +29,7 @@ func JwtMiddleware() echo.MiddlewareFunc {
 		},
 		SuccessHandler: func(c echo.Context) {
 			data := c.Get("buyer").(*jwt.Token).Claims.(*model.JWTClaims)
-			c.Set("user", model.BuyerJWTDecode{
+			c.Set("buyer", model.BuyerJWTDecode{
 				ID: data.ID,
 				Name: data.Name,
 			})
